@@ -32,7 +32,8 @@ async def handle_add_command(user_message: A2AMessage) -> TaskResult:
     if not decision_text:
         return create_error_response(user_message, "Please provide decision text.")
 
-    decision = await DecisionService.add_decision(decision_text, user_message.metadata.get("user", "unknown"))
+    user = (user_message.metadata or {}).get("user", "unknown")
+    decision = await DecisionService.add_decision(decision_text, user)
     response_text = ResponseFormatter.format_decision_added(decision)
     return create_success_response(user_message, response_text)
 
@@ -55,10 +56,11 @@ async def handle_edit_command(user_message: A2AMessage) -> TaskResult:
     decision_id, new_text = CommandParser.parse_edit_command(message_text)
     if not decision_id or not new_text:
         return create_error_response(user_message, "Invalid edit command format.")
-    decision = await DecisionService.update_decision(decision_id, new_text, user_message.metadata.get("user", "unknown"))
+    user = (user_message.metadata or {}).get("user", "unknown")
+    decision = await DecisionService.update_decision(decision_id, new_text, user)
     if not decision:
         return create_error_response(user_message, f"Decision #{decision_id} not found.")
-    response_text = ResponseFormatter.format_decision_updated(decision, user_message.metadata.get("user", "unknown"))
+    response_text = ResponseFormatter.format_decision_updated(decision, user)
     return create_success_response(user_message, response_text)
 
 async def handle_history_command(user_message: A2AMessage) -> TaskResult:
@@ -78,7 +80,8 @@ async def handle_propose_command(user_message: A2AMessage) -> TaskResult:
     decision_text = CommandParser.extract_decision_text(message_text)
     if not decision_text:
         return create_error_response(user_message, "Please provide proposal text.")
-    proposal = await VotingService.create_proposal(decision_text, user_message.metadata.get("user", "unknown"))
+    user = (user_message.metadata or {}).get("user", "unknown")
+    proposal = await VotingService.create_proposal(decision_text, user)
     response_text = ResponseFormatter.format_proposal_created(proposal)
     return create_success_response(user_message, response_text)
 
@@ -87,7 +90,8 @@ async def handle_approve_command(user_message: A2AMessage) -> TaskResult:
     proposal_id, _ = CommandParser.parse_vote_command(message_text)
     if not proposal_id:
         return create_error_response(user_message, "Invalid approve command format.")
-    proposal = await VotingService.add_vote(proposal_id, user_message.metadata.get("user", "unknown"), "approve")
+    user = (user_message.metadata or {}).get("user", "unknown")
+    proposal = await VotingService.add_vote(proposal_id, user, "approve")
     if not proposal:
         return create_error_response(user_message, f"Proposal #{proposal_id} not found.")
     if proposal.status == "approved":
@@ -101,7 +105,8 @@ async def handle_reject_command(user_message: A2AMessage) -> TaskResult:
     proposal_id, _ = CommandParser.parse_vote_command(message_text)
     if not proposal_id:
         return create_error_response(user_message, "Invalid reject command format.")
-    proposal = await VotingService.add_vote(proposal_id, user_message.metadata.get("user", "unknown"), "reject")
+    user = (user_message.metadata or {}).get("user", "unknown")
+    proposal = await VotingService.add_vote(proposal_id, user, "reject")
     if not proposal:
         return create_error_response(user_message, f"Proposal #{proposal_id} not found.")
     if proposal.status == "rejected":
