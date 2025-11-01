@@ -179,6 +179,77 @@ Test specific endpoint:
 curl http://localhost:8000/trigger/test-summary
 ```
 
+## 🤖 A2A Protocol & Telex Integration
+
+This agent is fully compliant with the Agent-to-Agent (A2A) protocol, allowing it to be integrated with Telex.im and other A2A-compatible platforms.
+
+### Well-Known Endpoint
+The agent exposes a `/.well-known/agent.json` endpoint for discovery. This provides metadata about the agent's capabilities, as defined in the A2A specification.
+
+### Workflow
+The `workflow.json` file in the root of the project defines a simple workflow for the agent. This can be imported into the Telex.im workflow editor to get started quickly.
+
+### API Request/Response Example
+
+Here is an example of the JSON-RPC communication for adding a new decision.
+
+**Request:**
+```json
+{
+    "jsonrpc": "2.0",
+    "id": "request-123",
+    "method": "message/send",
+    "params": {
+        "message": {
+            "kind": "message",
+            "role": "user",
+            "parts": [
+                {
+                    "kind": "text",
+                    "text": "/decision add \"Deploy on Railway for production\""
+                }
+            ],
+            "messageId": "msg-abc",
+            "taskId": "task-def",
+            "contextId": "context-ghi"
+        }
+    }
+}
+```
+
+**Success Response:**
+```json
+{
+    "jsonrpc": "2.0",
+    "id": "request-123",
+    "result": {
+        "id": "task-def",
+        "contextId": "context-ghi",
+        "status": {
+            "state": "completed",
+            "timestamp": "2025-11-01T01:15:00.000Z",
+            "message": {
+                "kind": "message",
+                "role": "agent",
+                "parts": [
+                    {
+                        "kind": "text",
+                        "text": "✅ Decision #6 added: \"Deploy on Railway for production\" (by unknown)"
+                    }
+                ],
+                "messageId": "generated-msg-id"
+            }
+        },
+        "artifacts": [],
+        "history": [
+            {...user_message...},
+            {...agent_response_message...}
+        ],
+        "kind": "task"
+    }
+}
+```
+
 ## 📦 Deployment
 
 ### Using Uvicorn
