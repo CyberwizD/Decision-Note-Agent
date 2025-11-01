@@ -1,102 +1,106 @@
 """
-Pydantic models for request/response validation
+Pydantic models for A2A protocol and Telex integration
 """
 from pydantic import BaseModel, Field
-from typing import Optional, List
+from typing import Literal, Optional, List, Dict, Any, Union
 from datetime import datetime
+from uuid import uuid4
 
+# ===== A2A Core Models =====
 
-# ===== Request Models (Incoming from Telex) =====
+class MessagePart(BaseModel):
+    kind: Literal["text", "data", "file"]
+    text: Optional[str] = None
+    data: Optional[Dict[str, Any]] = None
+    file_url: Optional[str] = None
 
-class A2ARequest(BaseModel):
-    """
-    Standard A2A protocol request from Telex
-    """
-    user: str
+class A2AMessage(BaseModel):
+    kind: Literal["message"] = "message"
+    role: Literal["user", "agent", "system"]
+    parts: List[MessagePart]
+    messageId: str = Field(default_factory=lambda: str(uuid4()))
+    taskId: Optional[str] = None
+    contextId: Optional[str] = None
+    metadata: Optional[Dict[str, Any]] = None
+
+class TaskStatus(BaseModel):
+    state: Literal["working", "completed", "input-required", "failed", "submitted", "canceled", "rejected", "auth-required", "unknown"]
+    timestamp: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+    message: Optional[A2AMessage] = None
+
+class Artifact(BaseModel):
+    artifactId: str = Field(default_factory=lambda: str(uuid4()))
+    name: str
+    parts: List[MessagePart]
+
+class TaskResult(BaseModel):
+    id: str
+    contextId: str
+    status: TaskStatus
+    artifacts: List[Artifact] = []
+    history: List[A2AMessage] = []
+    kind: Literal["task"] = "task"
+
+# ===== JSON-RPC Models =====
+
+class MessageParams(BaseModel):
+    message: A2AMessage
+    configuration: Optional[Dict[str, Any]] = None
+
+class ExecuteParams(BaseModel):
+    contextId: Optional[str] = None
+    taskId: Optional[str] = None
+    messages: List[A2AMessage]
+
+class JSONRPCRequest(BaseModel):
+    jsonrpc: Literal["2.0"]
+    id: Union[str, int]
+    method: str
+    params: Union[MessageParams, ExecuteParams]
+
+class JSONRPCError(BaseModel):
+    code: int
     message: str
-    channel_id: Optional[str] = None
-    message_id: Optional[str] = None
+    data: Optional[Dict[str, Any]] = None
 
+class JSONRPCResponse(BaseModel):
+    jsonrpc: Literal["2.0"] = "2.0"
+    id: Union[str, int, None]
+    result: Optional[TaskResult] = None
+    error: Optional[JSONRPCError] = None
 
-class VoteRequest(BaseModel):
-    """
-    Vote on a proposed decision
-    """
-    user: str
-    proposal_id: int
-    vote: str  # "approve" or "reject"
+# ===== Agent Card Models =====
 
+class Provider(BaseModel):
+    organization: str
+    url: str
 
-# ===== Response Models (Outgoing to Telex) =====
+class Capabilities(BaseModel):
+    streaming: bool
+    pushNotifications: bool
+    stateTransitionHistory: bool
 
-class A2AResponse(BaseModel):
-    """
-    Standard response to Telex
-    """
-    type: str = "text"  # text, markdown, error
-    content: str
+class SkillExample(BaseModel):
+    input: Dict[str, Any]
+    output: Dict[str, Any]
 
+class Skill(BaseModel):
+    id: str
+    name: str
+    description: str
+    inputModes: List[str]
+    outputModes: List[str]
+    examples: List[SkillExample]
 
-# ===== Internal Models =====
-
-class Decision(BaseModel):
-    """
-    Decision model
-    """
-    id: Optional[int] = None
-    text: str
-    original_text: Optional[str] = None
-    user: str
-    last_edited_by: Optional[str] = None
-    last_edited_at: Optional[datetime] = None
-    timestamp: datetime = Field(default_factory=datetime.now)
-    edit_count: int = 0
-    topic: Optional[str] = None
-    metadata: Optional[str] = None
-
-
-class ProposedDecision(BaseModel):
-    """
-    Proposed decision pending approval
-    """
-    id: Optional[int] = None
-    text: str
-    proposer: str
-    timestamp: datetime = Field(default_factory=datetime.now)
-    approvals: List[str] = Field(default_factory=list)
-    rejections: List[str] = Field(default_factory=list)
-    status: str = "pending"  # pending, approved, rejected, expired
-    threshold: int = 2
-    expires_at: Optional[datetime] = None
-
-
-class DecisionHistory(BaseModel):
-    """
-    Edit history for a decision
-    """
-    id: Optional[int] = None
-    decision_id: int
-    text: str
-    edited_by: str
-    edited_at: datetime = Field(default_factory=datetime.now)
-
-
-class ValidationResult(BaseModel):
-    """
-    Result from Gemini validation
-    """
-    is_valid: bool
-    reason: str
-    confidence: Optional[float] = None
-
-
-class DailySummary(BaseModel):
-    """
-    Daily summary structure
-    """
-    date: str
-    total_decisions: int
-    decisions: List[Decision]
-    ai_summary: str
-    themes: Optional[List[str]] = None
-    
+class AgentCard(BaseModel):
+    name: str
+    description: str
+    url: str
+    provider: Provider
+    version: str
+    documentationUrl: Optional[str] = None
+    capabilities: Capabilities
+    defaultInputModes: List[str]
+    defaultOutputModes: List[str]
+    skills: List[Skill]
+    supportsAuthenticatedExtendedCard: bool = False
