@@ -14,13 +14,13 @@ async def get_agent_card():
     return AgentCard(
         name="Decision Note Agent",
         description="Transforms chat discussions into structured, searchable decision logs.",
-        url="https://your-agent-domain.com/a2a",  # Replace with your actual agent URL
+        url="https://decision-note-agent-production.up.railway.app/a2a",
         provider=Provider(
             organization="Decision Note Inc.",
-            url="https://your-agent-domain.com"
+            url="https://decision-note-agent-production.up.railway.app"
         ),
         version="1.0.0",
-        documentationUrl="https://your-agent-domain.com/docs",
+        documentationUrl="https://decision-note-agent-production.up.railway.app/docs",
         capabilities=Capabilities(
             streaming=False,
             pushNotifications=True,  # For daily summaries
