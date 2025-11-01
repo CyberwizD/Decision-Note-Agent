@@ -3,7 +3,6 @@ Daily summary generation service
 """
 from services.decision_service import DecisionService
 from services.gemini_service import generate_daily_summary
-# from app.models import DailySummary
 from datetime import datetime
 
 
