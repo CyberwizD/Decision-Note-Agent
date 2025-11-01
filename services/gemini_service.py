@@ -11,7 +11,7 @@ settings = get_settings()
 
 # Configure Gemini
 genai.configure(api_key=settings.gemini_api_key)
-model = genai.GenerativeModel('gemini-pro')
+model = genai.GenerativeModel('gemini-2.5-pro')
 
 
 async def validate_decision(text: str) -> ValidationResult:
