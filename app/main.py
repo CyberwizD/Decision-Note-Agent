@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from app.database import init_database
-from routes import a2a, triggers
+from routes import a2a, triggers, well_known
 from app.config import get_settings
 
 settings = get_settings()
@@ -47,6 +47,7 @@ app.add_middleware(
 # Include routers
 app.include_router(a2a.router, tags=["A2A Protocol"])
 app.include_router(triggers.router, tags=["Triggers"])
+app.include_router(well_known.router, tags=["Discovery"])
 
 
 @app.get("/")
