@@ -1,188 +1,27 @@
 {
-  "name": "Decision Note Agent Workflow",
+  "active": true,
+  "category": "collaboration",
+  "description": "A collaborative tool for making, tracking, and managing team decisions.",
+  "id": "decision-note-agent",
+  "name": "Decision Note Agent",
+  "long_description": "You are a Decision Note Agent, a helpful assistant for managing team decisions. Your primary function is to help users record, track, and recall decisions made by the team. When responding, you should adhere to the commands provided. Use the `/decision help` command to see a list of available commands.",
+  "short_description": "Manage team decisions",
   "nodes": [
     {
+      "id": "decision_agent_node",
+      "name": "Decision Note Agent",
       "parameters": {},
-      "id": "start",
-      "name": "Start",
-      "type": "n8n-nodes-base.start",
-      "typeVersion": 1,
       "position": [
-        250,
-        300
-      ]
-    },
-    {
-      "parameters": {
-        "operation": "extractFromText",
-        "source": "message",
-        "regex": "^(?:/decision\\s+)?(\\w+)",
-        "output": "command"
-      },
-      "id": "extract-command",
-      "name": "Extract Command",
-      "type": "n8n-nodes-base.httpRequest",
+        816,
+        -112
+      ],
+      "type": "a2a/mastra-a2a-node",
       "typeVersion": 1,
-      "position": [
-        450,
-        300
-      ]
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "string": [
-            {
-              "value1": "={{$json.command}}",
-              "operation": "equal",
-              "value2": "add"
-            },
-            {
-              "value1": "={{$json.command}}",
-              "operation": "equal",
-              "value2": "propose"
-            },
-            {
-              "value1": "={{$json.command}}",
-              "operation": "equal",
-              "value2": "approve"
-            },
-            {
-              "value1": "={{$json.command}}",
-              "operation": "equal",
-              "value2": "reject"
-            },
-            {
-              "value1": "={{$json.command}}",
-              "operation": "equal",
-              "value2": "list"
-            },
-            {
-              "value1": "={{$json.command}}",
-              "operation": "equal",
-              "value2": "search"
-            },
-            {
-              "value1": "={{$json.command}}",
-              "operation": "equal",
-              "value2": "edit"
-            },
-            {
-              "value1": "={{$json.command}}",
-              "operation": "equal",
-              "value2": "history"
-            }
-          ]
-        }
-      },
-      "id": "switch-command",
-      "name": "Switch Command",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 1,
-      "position": [
-        650,
-        300
-      ]
-    },
-    {
-      "parameters": {
-        "url": "YOUR_FASTAPI_ENDPOINT/a2a",
-        "httpMethod": "POST",
-        "sendBody": true,
-        "body": "={{JSON.stringify({jsonrpc: '2.0', id: $json.messageId, method: 'message/send', params: {message: $json}})}}"
-      },
-      "id": "send-to-agent",
-      "name": "Send to Agent",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 1,
-      "position": [
-        850,
-        300
-      ]
+      "url": "https://decision-note-agent-production.up.railway.app/a2a"
     }
   ],
-  "connections": {
-    "start": {
-      "main": [
-        [
-          {
-            "node": "extract-command",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "extract-command": {
-      "main": [
-        [
-          {
-            "node": "switch-command",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "switch-command": {
-      "main": [
-        [
-          {
-            "node": "send-to-agent",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "send-to-agent",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "send-to-agent",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "send-to-agent",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "send-to-agent",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "send-to-agent",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "send-to-agent",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "send-to-agent",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    }
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
   }
 }
