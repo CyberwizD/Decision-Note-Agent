@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     gemini_api_key: str
     
     # Server Configuration
-    host: str = "127.0.0.1"
+    host: str = "0.0.0.0"
     port: int = 8000
     debug: bool = True
     
