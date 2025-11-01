@@ -108,6 +108,13 @@ class AgentCard(BaseModel):
 
 # ===== Internal Application Models =====
 
+class ValidationResult(BaseModel):
+    """
+    Model for the result of a decision validation
+    """
+    is_valid: bool
+    reason: str
+
 class Decision(BaseModel):
     """
     Internal model for a decision
