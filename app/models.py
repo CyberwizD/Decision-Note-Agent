@@ -104,3 +104,45 @@ class AgentCard(BaseModel):
     defaultOutputModes: List[str]
     skills: List[Skill]
     supportsAuthenticatedExtendedCard: bool = False
+
+
+# ===== Internal Application Models =====
+
+class Decision(BaseModel):
+    """
+    Internal model for a decision
+    """
+    id: Optional[int] = None
+    text: str
+    original_text: Optional[str] = None
+    user: str
+    last_edited_by: Optional[str] = None
+    last_edited_at: Optional[datetime] = None
+    timestamp: datetime = Field(default_factory=datetime.now)
+    edit_count: int = 0
+    topic: Optional[str] = None
+    metadata: Optional[str] = None
+
+class ProposedDecision(BaseModel):
+    """
+    Internal model for a proposed decision pending approval
+    """
+    id: Optional[int] = None
+    text: str
+    proposer: str
+    timestamp: datetime = Field(default_factory=datetime.now)
+    approvals: List[str] = Field(default_factory=list)
+    rejections: List[str] = Field(default_factory=list)
+    status: str = "pending"  # pending, approved, rejected, expired
+    threshold: int = 2
+    expires_at: Optional[datetime] = None
+
+class DecisionHistory(BaseModel):
+    """
+    Internal model for the edit history of a decision
+    """
+    id: Optional[int] = None
+    decision_id: int
+    text: str
+    edited_by: str
+    edited_at: datetime = Field(default_factory=datetime.now)
