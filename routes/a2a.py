@@ -4,10 +4,6 @@ Main A2A endpoint for handling JSON-RPC requests from Telex.
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 from app.models import JSONRPCRequest, JSONRPCResponse, JSONRPCError
-from routes.workflow_handlers import (
-    handle_add_decision_node,
-    handle_list_decisions_node,
-)
 from utils.formatters import ResponseFormatter
 
 router = APIRouter()
