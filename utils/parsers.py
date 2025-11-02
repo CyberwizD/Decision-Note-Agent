@@ -36,7 +36,7 @@ class CommandParser:
             return ("unknown", None)
         
         command = parts[0].lower()
-        argument = parts[1] if len(parts) > 1 else None
+        argument = parts[1].strip() if len(parts) > 1 else None
         
         return (command, argument)
     
