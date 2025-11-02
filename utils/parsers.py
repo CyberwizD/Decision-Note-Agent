@@ -46,9 +46,9 @@ class CommandParser:
         Extract decision text from add/propose command
         
         Handles quotes and various formats:
-            /decision add "Use MongoDB"
-            /decision add Use MongoDB
-            /decision propose "Switch to React"
+            add "Use MongoDB"
+            add Use MongoDB
+            propose "Switch to React"
         """
         # Remove command prefix
         _, text = CommandParser.parse_command(message)
@@ -70,8 +70,8 @@ class CommandParser:
         Parse edit command to extract decision ID and new text
         
         Examples:
-            "/decision edit 5 New text" → (5, "New text")
-            "/decision edit 3 "Use PostgreSQL"" → (3, "Use PostgreSQL")
+            "edit 5 New text" → (5, "New text")
+            "edit 3 "Use PostgreSQL"" → (3, "Use PostgreSQL")
         """
         _, argument = CommandParser.parse_command(message)
         
@@ -112,8 +112,8 @@ class CommandParser:
         Parse vote command to extract proposal ID and vote type
         
         Examples:
-            "/decision approve 3" → (3, "approve")
-            "/decision reject 5" → (5, "reject")
+            "approve 3" → (3, "approve")
+            "reject 5" → (5, "reject")
         """
         command, argument = CommandParser.parse_command(message)
         
