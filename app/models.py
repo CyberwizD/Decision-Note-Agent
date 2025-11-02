@@ -11,7 +11,7 @@ from uuid import uuid4
 class MessagePart(BaseModel):
     kind: Literal["text", "data", "file"]
     text: Optional[str] = None
-    data: Optional[Dict[str, Any]] = None
+    data: Optional[List[Dict[str, Any]]] = None
     file_url: Optional[str] = None
 
 class A2AMessage(BaseModel):
@@ -56,7 +56,7 @@ class JSONRPCRequest(BaseModel):
     jsonrpc: Literal["2.0"]
     id: Union[str, int]
     method: str
-    params: Union[MessageParams, ExecuteParams]
+    params: MessageParams
 
 class JSONRPCError(BaseModel):
     code: int
