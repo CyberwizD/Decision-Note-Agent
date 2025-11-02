@@ -1,5 +1,5 @@
 {
-  "active": true,
+  "active": false,
   "category": "collaboration",
   "description": "A collaborative tool for making, tracking, and managing team decisions.",
   "id": "decision-note-agent",
