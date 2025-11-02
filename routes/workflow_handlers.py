@@ -120,7 +120,7 @@ async def handle_help_command(user_message: A2AMessage) -> TaskResult:
     return create_success_response(user_message, response_text)
 
 async def handle_unknown_command(user_message: A2AMessage) -> TaskResult:
-    return create_error_response(user_message, "Unknown command. Type `/decision help` for available commands.")
+    return create_error_response(user_message, "Unknown command. Type `help` for available commands.")
 
 COMMAND_HANDLERS = {
     "add": handle_add_command,
