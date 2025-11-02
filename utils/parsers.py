@@ -13,23 +13,23 @@ class CommandParser:
     @staticmethod
     def parse_command(message: str) -> Tuple[str, Optional[str]]:
         """
-        Parse command from message
+        Parse command from message.
         
         Returns:
             (command, argument)
             
         Examples:
-            "/decision add Use MongoDB" → ("add", "Use MongoDB")
-            "/decision list" → ("list", None)
-            "/decision search backend" → ("search", "backend")
+            "add Use MongoDB" → ("add", "Use MongoDB")
+            "list" → ("list", None)
+            "search backend" → ("search", "backend")
         """
         message = message.strip()
-        
+
         # Remove /decision prefix if present
         if message.startswith("/decision"):
             message = message[9:].strip()
         
-        # Split into command and rest
+        # Split into command and the rest of the string
         parts = message.split(maxsplit=1)
         
         if not parts:
