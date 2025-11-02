@@ -15,16 +15,10 @@ async def handle_message_send(params: MessageParams) -> TaskResult:
     """
     user_message = params.message
     message_text = ""
-    
-    # The user's command is now in the `data` part of the message
-    if len(user_message.parts) > 1 and user_message.parts[1].kind == "data":
-        # The actual command is the last text part in the data array
-        message_text = user_message.parts[1].data[-1]['text'].strip()
-    else:
-        for part in user_message.parts:
-            if part.kind == "text":
-                message_text = part.text.strip()
-                break
+    for part in user_message.parts:
+        if part.kind == "text":
+            message_text = part.text.strip()
+            break
 
     command, _ = CommandParser.parse_command(message_text)
     
