@@ -1,7 +1,7 @@
 """
 Handlers for specific A2A methods and commands.
 """
-from app.models import MessageParams, TaskResult, TaskStatus, A2AMessage, MessagePart
+from app.models import MessageParams, TaskResult, TaskStatus, A2AMessage, MessagePart, Artifact
 from services.decision_service import DecisionService
 from services.voting_service import VotingService
 from services.gemini_service import validate_decision
@@ -140,10 +140,18 @@ def create_success_response(user_message: A2AMessage, response_text: str) -> Tas
         role="agent",
         parts=[MessagePart(kind="text", text=response_text)]
     )
+    
+    # Create an artifact with the response text
+    artifact = Artifact(
+        name="DecisionNoteResponse",
+        parts=[MessagePart(kind="text", text=response_text)]
+    )
+    
     return TaskResult(
         id=user_message.taskId or str(uuid4()),
         contextId=user_message.contextId or str(uuid4()),
         status=TaskStatus(state="completed", message=response_message),
+        artifacts=[artifact],
         history=[user_message, response_message]
     )
 
