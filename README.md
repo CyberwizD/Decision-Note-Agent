@@ -56,40 +56,40 @@ API documentation available at `http://localhost:8000/docs`
 ## 📋 Commands
 
 ### Direct Commands
-- `/decision add "Your decision"` - Log a decision immediately
-- `/decision list` - View all recorded decisions
-- `/decision search "keyword"` - Search decisions
-- `/decision edit <id> "New text"` - Update a decision
-- `/decision history <id>` - View edit history
+- `add "Your decision"` - Log a decision immediately
+- `list` - View all recorded decisions
+- `search "keyword"` - Search decisions
+- `edit <id> "New text"` - Update a decision
+- `history <id>` - View edit history
 
 ### Voting/Approval
-- `/decision propose "Your decision"` - Propose for team approval
-- `/decision approve <id>` - Approve a proposal
-- `/decision reject <id>` - Reject a proposal
+- `propose "Your decision"` - Propose for team approval
+- `approve <id>` - Approve a proposal
+- `reject <id>` - Reject a proposal
 
 ### Help
-- `/decision help` - Show all available commands
+- `help` - Show all available commands
 
 ## 📖 Examples
 
 ```bash
 # Add a decision directly
-/decision add "Use PostgreSQL for the database"
+add "Use PostgreSQL for the database"
 
 # Propose a decision for team voting
-/decision propose "Switch to React for frontend"
+propose "Switch to React for frontend"
 
 # Approve a proposal
-/decision approve 3
+approve 3
 
 # Search decisions
-/decision search "backend"
+search "backend"
 
 # Edit a decision
-/decision edit 5 "Use MongoDB instead"
+edit 5 "Use MongoDB instead"
 
 # View history
-/decision history 5
+history 5
 ```
 
 ## 🏗 Project Structure
@@ -206,7 +206,7 @@ Here is an example of the JSON-RPC communication for adding a new decision.
             "parts": [
                 {
                     "kind": "text",
-                    "text": "/decision add \"Deploy on Railway for production\""
+                    "text": "add \"Deploy on Railway for production\""
                 }
             ],
             "messageId": "msg-abc",
