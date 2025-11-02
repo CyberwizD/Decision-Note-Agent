@@ -27,7 +27,7 @@ class ResponseFormatter:
         Format list of decisions
         """
         if not decisions:
-            return "📋 No decisions recorded yet. Start logging with `/decision add \"Your decision\"`"
+            return "📋 No decisions recorded yet. Start logging with `add \"Your decision\"`"
         
         header = f"🗂 Recorded Decisions ({len(decisions)}):\n\n"
         
@@ -76,8 +76,8 @@ class ResponseFormatter:
             f"📋 Decision Proposed: \"{proposal.text}\"\n"
             f"   (proposed by {proposal.proposer})\n\n"
             f"React with:\n"
-            f"• `/decision approve {proposal.id}` to approve\n"
-            f"• `/decision reject {proposal.id}` to reject\n\n"
+            f"• `approve {proposal.id}` to approve\n"
+            f"• `reject {proposal.id}` to reject\n\n"
             f"Need {proposal.threshold} approvals to log.\n"
             f"Current: ✅ ({len(proposal.approvals)}) | ❌ ({len(proposal.rejections)})"
         )
@@ -135,24 +135,24 @@ class ResponseFormatter:
 📖 **DecisionNote Commands**
 
 **Direct Commands:**
-• `/decision add "Your decision"` - Log a decision immediately
-• `/decision list` - View all recorded decisions
-• `/decision search "keyword"` - Search decisions by keyword
-• `/decision edit <id> "New text"` - Update an existing decision
-• `/decision history <id>` - View edit history of a decision
-• `/decision help` - Show this help message
+• `add "Your decision"` - Log a decision immediately
+• `list` - View all recorded decisions
+• `search "keyword"` - Search decisions by keyword
+• `edit <id> "New text"` - Update an existing decision
+• `history <id>` - View edit history of a decision
+• `help` - Show this help message
 
 **Voting/Approval:**
-• `/decision propose "Your decision"` - Propose a decision for team approval
-• `/decision approve <id>` - Approve a proposed decision
-• `/decision reject <id>` - Reject a proposed decision
+• `propose "Your decision"` - Propose a decision for team approval
+• `approve <id>` - Approve a proposed decision
+• `reject <id>` - Reject a proposed decision
 
 **Examples:**
-`/decision add "Use PostgreSQL for the database"`
-`/decision propose "Switch to React for frontend"`
-`/decision search "backend"`
-`/decision edit 5 "Use MongoDB instead"`
-`/decision approve 3`
+`add "Use PostgreSQL for the database"`
+`propose "Switch to React for frontend"`
+`search "backend"`
+`edit 5 "Use MongoDB instead"`
+`approve 3`
 
 **Daily Summary:**
 Automatically posted every day with AI-generated insights!
