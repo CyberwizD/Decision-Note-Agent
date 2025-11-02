@@ -140,6 +140,7 @@ class ResponseFormatter:
 • `/decision search "keyword"` - Search decisions by keyword
 • `/decision edit <id> "New text"` - Update an existing decision
 • `/decision history <id>` - View edit history of a decision
+• `/decision help` - Show this help message
 
 **Voting/Approval:**
 • `/decision propose "Your decision"` - Propose a decision for team approval
