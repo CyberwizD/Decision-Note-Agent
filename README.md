@@ -46,7 +46,7 @@ cp .env.example .env
 ### 3. Run Development Server
 
 ```bash
-python run.py
+python app.py
 ```
 
 Server will start at `http://localhost:8000`
@@ -57,39 +57,39 @@ API documentation available at `http://localhost:8000/docs`
 
 ### Direct Commands
 - `add "Your decision"` - Log a decision immediately
-- `list` - View all recorded decisions
-- `search "keyword"` - Search decisions
-- `edit <id> "New text"` - Update a decision
-- `history <id>` - View edit history
+- `/decision list` - View all recorded decisions
+- `/decision search "keyword"` - Search decisions
+- `/decision edit <id> "New text"` - Update a decision
+- `/decision history <id>` - View edit history
 
 ### Voting/Approval
-- `propose "Your decision"` - Propose for team approval
-- `approve <id>` - Approve a proposal
-- `reject <id>` - Reject a proposal
+- `/decision propose "Your decision"` - Propose for team approval
+- `/decision approve <id>` - Approve a proposal
+- `/decision reject <id>` - Reject a proposal
 
 ### Help
-- `help` - Show all available commands
+- `/decision help` - Show all available commands
 
 ## 📖 Examples
 
 ```bash
 # Add a decision directly
-add "Use PostgreSQL for the database"
+/decision add "Use PostgreSQL for the database"
 
 # Propose a decision for team voting
-propose "Switch to React for frontend"
+/decision propose "Switch to React for frontend"
 
 # Approve a proposal
-approve 3
+/decision approve 3
 
 # Search decisions
-search "backend"
+/decision search "backend"
 
 # Edit a decision
-edit 5 "Use MongoDB instead"
+/decision edit 5 "Use MongoDB instead"
 
 # View history
-history 5
+/decision history 5
 ```
 
 ## 🏗 Project Structure
@@ -97,27 +97,36 @@ history 5
 ```
 decisionnote-agent/
 ├── app/
+│   ├── __init__.py
 │   ├── main.py              # FastAPI app
 │   ├── config.py            # Configuration
 │   ├── database.py          # Database connection
 │   ├── models.py            # Pydantic models
-│   ├── schemas.py           # Database schemas
-│   ├── services/            # Business logic
-│   │   ├── decision_service.py
-│   │   ├── voting_service.py
-│   │   ├── gemini_service.py
-│   │   └── summary_service.py
-│   ├── utils/               # Utilities
-│   │   ├── parsers.py
-│   │   └── formatters.py
-│   └── routes/              # API routes
-│       ├── a2a.py
-│       └── triggers.py
+│   └── schemas.py           # Database schemas
+├── routes/
+│   ├── __init__.py
+│   ├── a2a.py               # A2A endpoint
+│   ├── triggers.py          # Trigger endpoints
+│   ├── well_known.py        # Agent discovery
+│   └── workflow_handlers.py # Command handlers
+├── services/
+│   ├── __init__.py
+│   ├── decision_service.py
+│   ├── voting_service.py
+│   ├── gemini_service.py
+│   ├── summary_service.py
+│   └── notification_service.py
+├── utils/
+│   ├── __init__.py
+│   ├── parsers.py
+│   ├── formatters.py
+│   └── validators.py
 ├── data/                    # Database files
-├── tests/                   # Test files
-├── .env                     # Environment variables
-├── requirements.txt         # Dependencies
-└── run.py                   # Dev server launcher
+├── app.py                   # App entry point
+├── Dockerfile
+├── requirements.txt
+├── workflow.json
+└── README.md
 ```
 
 ## 🔧 Configuration
