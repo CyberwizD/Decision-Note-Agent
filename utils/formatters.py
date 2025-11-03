@@ -135,24 +135,24 @@ class ResponseFormatter:
 📖 **DecisionNote Commands**
 
 **Direct Commands:**
-• `add "Your decision"` - Log a decision immediately
-• `list` - View all recorded decisions
-• `search "keyword"` - Search decisions by keyword
-• `edit <id> "New text"` - Update an existing decision
-• `history <id>` - View edit history of a decision
-• `help` - Show this help message
+• `/decision add "Your decision"` - Log a decision immediately
+• `/decision list` - View all recorded decisions
+• `/decision search "keyword"` - Search decisions by keyword
+• `/decision edit <id> "New text"` - Update an existing decision
+• `/decision history <id>` - View edit history of a decision
+• `/decision help` - Show this help message
 
 **Voting/Approval:**
-• `propose "Your decision"` - Propose a decision for team approval
-• `approve <id>` - Approve a proposed decision
-• `reject <id>` - Reject a proposed decision
+• `/decision propose "Your decision"` - Propose a decision for team approval
+• `/decision approve <id>` - Approve a proposed decision
+• `/decision reject <id>` - Reject a proposed decision
 
 **Examples:**
-`add "Use PostgreSQL for the database"`
-`propose "Switch to React for frontend"`
-`search "backend"`
-`edit 5 "Use MongoDB instead"`
-`approve 3`
+`/decision add "Use PostgreSQL for the database"`
+`/decision propose "Switch to React for frontend"`
+`/decision search "backend"`
+`/decision edit 5 "Use MongoDB instead"`
+`/decision approve 3`
 
 **Daily Summary:**
 Automatically posted every day with AI-generated insights!
