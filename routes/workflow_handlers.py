@@ -28,10 +28,10 @@ async def handle_message_send(params: MessageParams) -> TaskResult:
     command, _ = CommandParser.parse_command(message_text)
     
     handler = COMMAND_HANDLERS.get(command, handle_unknown_command)
-    return await handler(user_message)
+    # Pass the extracted message_text to the handler
+    return await handler(user_message, message_text)
 
-async def handle_add_command(user_message: A2AMessage) -> TaskResult:
-    message_text = user_message.parts[0].text
+async def handle_add_command(user_message: A2AMessage, message_text: str) -> TaskResult:
     decision_text = CommandParser.extract_decision_text(message_text)
     
     if not decision_text:
@@ -42,13 +42,12 @@ async def handle_add_command(user_message: A2AMessage) -> TaskResult:
     response_text = ResponseFormatter.format_decision_added(decision)
     return create_success_response(user_message, response_text)
 
-async def handle_list_command(user_message: A2AMessage) -> TaskResult:
+async def handle_list_command(user_message: A2AMessage, message_text: str) -> TaskResult:
     decisions = await DecisionService.get_all_decisions(limit=20)
     response_text = ResponseFormatter.format_decision_list(decisions)
     return create_success_response(user_message, response_text)
 
-async def handle_search_command(user_message: A2AMessage) -> TaskResult:
-    message_text = user_message.parts[0].text
+async def handle_search_command(user_message: A2AMessage, message_text: str) -> TaskResult:
     query = CommandParser.parse_search_query(message_text)
     if not query:
         return create_error_response(user_message, "Please provide a search query.")
@@ -56,8 +55,7 @@ async def handle_search_command(user_message: A2AMessage) -> TaskResult:
     response_text = ResponseFormatter.format_search_results(decisions, query)
     return create_success_response(user_message, response_text)
 
-async def handle_edit_command(user_message: A2AMessage) -> TaskResult:
-    message_text = user_message.parts[0].text
+async def handle_edit_command(user_message: A2AMessage, message_text: str) -> TaskResult:
     decision_id, new_text = CommandParser.parse_edit_command(message_text)
     if not decision_id or not new_text:
         return create_error_response(user_message, "Invalid edit command format.")
@@ -68,8 +66,7 @@ async def handle_edit_command(user_message: A2AMessage) -> TaskResult:
     response_text = ResponseFormatter.format_decision_updated(decision, user)
     return create_success_response(user_message, response_text)
 
-async def handle_history_command(user_message: A2AMessage) -> TaskResult:
-    message_text = user_message.parts[0].text
+async def handle_history_command(user_message: A2AMessage, message_text: str) -> TaskResult:
     _, argument = CommandParser.parse_command(message_text)
     try:
         decision_id = int(argument)
@@ -80,8 +77,7 @@ async def handle_history_command(user_message: A2AMessage) -> TaskResult:
     response_text = f"History for decision #{decision_id}:\\n" + "\\n".join([f"- {h.text}" for h in history])
     return create_success_response(user_message, response_text)
 
-async def handle_propose_command(user_message: A2AMessage) -> TaskResult:
-    message_text = user_message.parts[0].text
+async def handle_propose_command(user_message: A2AMessage, message_text: str) -> TaskResult:
     decision_text = CommandParser.extract_decision_text(message_text)
     if not decision_text:
         return create_error_response(user_message, "Please provide proposal text.")
@@ -90,8 +86,7 @@ async def handle_propose_command(user_message: A2AMessage) -> TaskResult:
     response_text = ResponseFormatter.format_proposal_created(proposal)
     return create_success_response(user_message, response_text)
 
-async def handle_approve_command(user_message: A2AMessage) -> TaskResult:
-    message_text = user_message.parts[0].text
+async def handle_approve_command(user_message: A2AMessage, message_text: str) -> TaskResult:
     proposal_id, _ = CommandParser.parse_vote_command(message_text)
     if not proposal_id:
         return create_error_response(user_message, "Invalid approve command format.")
@@ -105,8 +100,7 @@ async def handle_approve_command(user_message: A2AMessage) -> TaskResult:
         response_text = ResponseFormatter.format_vote_update(proposal)
     return create_success_response(user_message, response_text)
 
-async def handle_reject_command(user_message: A2AMessage) -> TaskResult:
-    message_text = user_message.parts[0].text
+async def handle_reject_command(user_message: A2AMessage, message_text: str) -> TaskResult:
     proposal_id, _ = CommandParser.parse_vote_command(message_text)
     if not proposal_id:
         return create_error_response(user_message, "Invalid reject command format.")
@@ -120,11 +114,11 @@ async def handle_reject_command(user_message: A2AMessage) -> TaskResult:
         response_text = ResponseFormatter.format_vote_update(proposal)
     return create_success_response(user_message, response_text)
 
-async def handle_help_command(user_message: A2AMessage) -> TaskResult:
+async def handle_help_command(user_message: A2AMessage, message_text: str) -> TaskResult:
     response_text = ResponseFormatter.format_help()
     return create_success_response(user_message, response_text)
 
-async def handle_unknown_command(user_message: A2AMessage) -> TaskResult:
+async def handle_unknown_command(user_message: A2AMessage, message_text: str) -> TaskResult:
     return create_error_response(user_message, "Unknown command. Type `help` for available commands.")
 
 COMMAND_HANDLERS = {
