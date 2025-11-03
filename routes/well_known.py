@@ -14,7 +14,7 @@ async def get_agent_card():
     return AgentCard(
         name="Decision Note Agent",
         description="Transforms chat discussions into structured, searchable decision logs.",
-        url="https://decision-note-agent-production.up.railway.app/a2a",
+        url="https://decision-note-agent-production.up.railway.app/a2a/agent/DecisionNote",
         provider=Provider(
             organization="Decision Note Inc.",
             url="https://decision-note-agent-production.up.railway.app"
@@ -52,6 +52,97 @@ async def get_agent_card():
                     SkillExample(
                         input={"parts": [{"text": "/decision list"}]},
                         output={"parts": [{"text": "1. Use FastAPI..."}]}
+                    )
+                ]
+            ),
+            Skill(
+                id="propose-decision",
+                name="Propose Decision",
+                description="Proposes a new decision for voting.",
+                inputModes=["text/plain"],
+                outputModes=["text/plain"],
+                examples=[
+                    SkillExample(
+                        input={"parts": [{"text": "/decision propose \"Switch to React\""}]},
+                        output={"parts": [{"text": "Proposal #1 created: \"Switch to React\""}]}
+                    )
+                ]
+            ),
+            Skill(
+                id="approve-proposal",
+                name="Approve Proposal",
+                description="Approves a decision proposal.",
+                inputModes=["text/plain"],
+                outputModes=["text/plain"],
+                examples=[
+                    SkillExample(
+                        input={"parts": [{"text": "/decision approve 1"}]},
+                        output={"parts": [{"text": "Vote recorded for proposal #1."}]}
+                    )
+                ]
+            ),
+            Skill(
+                id="reject-proposal",
+                name="Reject Proposal",
+                description="Rejects a decision proposal.",
+                inputModes=["text/plain"],
+                outputModes=["text/plain"],
+                examples=[
+                    SkillExample(
+                        input={"parts": [{"text": "/decision reject 1"}]},
+                        output={"parts": [{"text": "Vote recorded for proposal #1."}]}
+                    )
+                ]
+            ),
+            Skill(
+                id="search-decisions",
+                name="Search Decisions",
+                description="Searches for decisions by keyword.",
+                inputModes=["text/plain"],
+                outputModes=["text/plain"],
+                examples=[
+                    SkillExample(
+                        input={"parts": [{"text": "/decision search FastAPI"}]},
+                        output={"parts": [{"text": "Found 1 decision matching 'FastAPI'..."}]}
+                    )
+                ]
+            ),
+            Skill(
+                id="edit-decision",
+                name="Edit Decision",
+                description="Edits an existing decision.",
+                inputModes=["text/plain"],
+                outputModes=["text/plain"],
+                examples=[
+                    SkillExample(
+                        input={"parts": [{"text": "/decision edit 1 \"Use FastAPI and Pydantic\""}]},
+                        output={"parts": [{"text": "Decision #1 updated."}]}
+                    )
+                ]
+            ),
+            Skill(
+                id="decision-history",
+                name="Decision History",
+                description="Shows the edit history of a decision.",
+                inputModes=["text/plain"],
+                outputModes=["text/plain"],
+                examples=[
+                    SkillExample(
+                        input={"parts": [{"text": "/decision history 1"}]},
+                        output={"parts": [{"text": "History for decision #1..."}]}
+                    )
+                ]
+            ),
+            Skill(
+                id="help",
+                name="Help",
+                description="Shows a list of available commands.",
+                inputModes=["text/plain"],
+                outputModes=["text/plain"],
+                examples=[
+                    SkillExample(
+                        input={"parts": [{"text": "/decision help"}]},
+                        output={"parts": [{"text": "Available commands..."}]}
                     )
                 ]
             )
