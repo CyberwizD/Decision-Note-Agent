@@ -56,7 +56,7 @@ class JSONRPCRequest(BaseModel):
     jsonrpc: Literal["2.0"]
     id: Union[str, int]
     method: str
-    params: MessageParams
+    params: Dict[str, Any]
 
 class JSONRPCError(BaseModel):
     code: int

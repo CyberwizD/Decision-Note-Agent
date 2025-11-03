@@ -1,7 +1,7 @@
 """
 Handlers for specific A2A methods and commands.
 """
-from app.models import MessageParams, TaskResult, TaskStatus, A2AMessage, MessagePart, Artifact
+from app.models import MessageParams, TaskResult, TaskStatus, A2AMessage, MessagePart, Artifact, ExecuteParams
 from services.decision_service import DecisionService
 from services.voting_service import VotingService
 from services.gemini_service import validate_decision
@@ -9,11 +9,10 @@ from utils.parsers import CommandParser
 from utils.formatters import ResponseFormatter
 from uuid import uuid4
 
-async def handle_message_send(params: MessageParams) -> TaskResult:
+async def process_user_message(user_message: A2AMessage) -> TaskResult:
     """
-    Handles the 'message/send' method and dispatches to the appropriate command handler.
+    Processes a single user message and returns a TaskResult.
     """
-    user_message = params.message
     message_text = ""
     # The user's command is now in the `data` part of the message
     if len(user_message.parts) > 1 and user_message.parts[1].kind == "data":
@@ -30,6 +29,33 @@ async def handle_message_send(params: MessageParams) -> TaskResult:
     handler = COMMAND_HANDLERS.get(command, handle_unknown_command)
     # Pass the extracted message_text to the handler
     return await handler(user_message, message_text)
+
+async def handle_message_send(params: MessageParams) -> TaskResult:
+    """
+    Handles the 'message/send' method.
+    """
+    return await process_user_message(params.message)
+
+async def handle_execute(params: ExecuteParams) -> TaskResult:
+    """
+    Handles the 'execute' method by processing the last message in the history.
+    """
+    if not params.messages:
+        # Create a generic error response if there are no messages
+        return TaskResult(
+            id=params.taskId or str(uuid4()),
+            contextId=params.contextId or str(uuid4()),
+            status=TaskStatus(
+                state="failed",
+                message=A2AMessage(
+                    role="agent",
+                    parts=[MessagePart(kind="text", text="Cannot execute with an empty message history.")]
+                )
+            )
+        )
+    
+    last_user_message = params.messages[-1]
+    return await process_user_message(last_user_message)
 
 async def handle_add_command(user_message: A2AMessage, message_text: str) -> TaskResult:
     decision_text = CommandParser.extract_decision_text(message_text)
@@ -134,24 +160,50 @@ COMMAND_HANDLERS = {
 }
 
 # Helper functions to create responses
-def create_success_response(user_message: A2AMessage, response_text: str) -> TaskResult:
+def create_success_response(user_message: A2AMessage, response_text: str, execution_results: dict = None, tool_results: dict = None) -> TaskResult:
+    # Create the agent's response message, populating taskId and metadata from the user's message
     response_message = A2AMessage(
         role="agent",
-        parts=[MessagePart(kind="text", text=response_text)]
+        parts=[MessagePart(kind="text", text=response_text, data=None, file_url=None)],
+        messageId=str(uuid4()), # Generate a new messageId for the agent's response
+        taskId=user_message.taskId,
+        contextId=user_message.contextId,
+        metadata=user_message.metadata
     )
     
-    # Create an artifact with the response text
-    artifact = Artifact(
-        name="DecisionNoteResponse",
-        parts=[MessagePart(kind="text", text=response_text)]
-    )
+    artifacts = [
+        Artifact(
+            name="assistantResponse",
+            parts=[MessagePart(kind="text", text=response_text, data=None, file_url=None)]
+        )
+    ]
     
+    if execution_results:
+        artifacts.append(Artifact(
+            name="ExecutionResults",
+            parts=[MessagePart(kind="data", data=execution_results, text=None, file_url=None)]
+        ))
+        
+    if tool_results:
+        artifacts.append(Artifact(
+            name="ToolResults",
+            parts=[MessagePart(kind="data", data=tool_results, text=None, file_url=None)]
+        ))
+
+    # Ensure user_message in history also has taskId and metadata if available
+    user_message_for_history = user_message.model_copy(update={
+        "taskId": user_message.taskId,
+        "contextId": user_message.contextId,
+        "metadata": user_message.metadata
+    })
+
     return TaskResult(
         id=user_message.taskId or str(uuid4()),
         contextId=user_message.contextId or str(uuid4()),
         status=TaskStatus(state="completed", message=response_message),
-        artifacts=[artifact],
-        history=[user_message, response_message]
+        artifacts=artifacts,
+        history=[user_message_for_history, response_message],
+        kind="task" # Explicitly set kind to "task"
     )
 
 def create_error_response(user_message: A2AMessage, error_text: str) -> TaskResult:
