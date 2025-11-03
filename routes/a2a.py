@@ -17,7 +17,7 @@ METHOD_HANDLERS = {
 }
 
 
-@router.post("/a2a")
+@router.post("/a2a/agent/DecisionNote")
 async def handle_a2a_request(request: Request):
     """
     Main A2A endpoint - handles all JSON-RPC requests from Telex.
