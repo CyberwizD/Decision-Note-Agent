@@ -56,7 +56,7 @@ API documentation available at `http://localhost:8000/docs`
 ## 📋 Commands
 
 ### Direct Commands
-- `add "Your decision"` - Log a decision immediately
+- `/decision add "Your decision"` - Log a decision immediately
 - `/decision list` - View all recorded decisions
 - `/decision search "keyword"` - Search decisions
 - `/decision edit <id> "New text"` - Update a decision
